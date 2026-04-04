@@ -289,7 +289,7 @@
   // הגדרות — יש לעדכן
   // ============================================================
   const SHEET_ID = "YOUR_GOOGLE_SHEET_ID";
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaxT-1cQnIWy9qcRT8vpxJkvOW5kzJDDh5olH1GBN1K414ursZVcE5T1KlwcAKTtzSlw/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSMwkOqfrkh-tdM3L38GUZYuVcTwnjZOG9T9xiFpEeMkPo01zA8drzZd0kbkUar60T1A/exec";
   // ============================================================
 
   // הצג/הסתר סעיפים לפי תדירות
@@ -341,21 +341,29 @@
       description: document.getElementById('description').value.trim(),
     };
 
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
+    const params = new URLSearchParams(data);
+    const url = APPS_SCRIPT_URL + '?' + params.toString();
+
+    fetch(url, { method: 'GET', mode: 'no-cors' })
     .then(() => {
       document.getElementById('success-msg').style.display = 'block';
       document.getElementById('error-msg').style.display = 'none';
       btn.textContent = 'נוסף בהצלחה!';
+      document.getElementById('task').value = '';
+      document.getElementById('owner').value = '';
+      document.getElementById('mail').value = '';
+      document.getElementById('description').value = '';
+      document.getElementById('day-of-month').value = '';
+      document.getElementById('interval-days').value = '';
+      document.querySelectorAll('input[name="freq"]').forEach(r => r.checked = false);
+      document.querySelectorAll('.check-btn').forEach(c => c.checked = false);
+      document.getElementById('section-weekly').classList.remove('visible');
+      document.getElementById('section-monthly').classList.remove('visible');
+      document.getElementById('section-interval').classList.remove('visible');
       setTimeout(() => {
         document.getElementById('success-msg').style.display = 'none';
         btn.disabled = false;
         btn.textContent = 'הוסף משימה';
-        document.querySelector('form') && document.querySelector('form').reset();
       }, 3000);
     })
     .catch(() => {
