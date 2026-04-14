@@ -323,20 +323,28 @@
 <script>
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSMwkOqfrkh-tdM3L38GUZYuVcTwnjZOG9T9xiFpEeMkPo01zA8drzZd0kbkUar60T1A/exec";
 
-  const sections = ['weekly', 'monthly', 'quarterly', 'interval', 'one-time'];
-
   const sectionMap = {
     weekly:    'section-weekly',
     monthly:   'section-monthly',
     quarterly: 'section-quarterly',
+    yearly:    null,
     interval:  'section-interval',
     one_time:  'section-one-time',
   };
 
+  function hideAllSections() {
+    Object.values(sectionMap).forEach(id => {
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('visible');
+    });
+  }
+
   document.querySelectorAll('input[name="freq"]').forEach(radio => {
     radio.addEventListener('change', function() {
-      sections.forEach(s => document.getElementById('section-' + s).classList.remove('visible'));
-      if (sectionMap[this.value]) document.getElementById(sectionMap[this.value]).classList.add('visible');
+      hideAllSections();
+      const target = sectionMap[this.value];
+      if (target) document.getElementById(target).classList.add('visible');
     });
   });
 
@@ -392,7 +400,7 @@
       document.getElementById('interval-days').value = '';
       document.querySelectorAll('input[name="freq"]').forEach(r => r.checked = false);
       document.querySelectorAll('.check-btn').forEach(c => c.checked = false);
-      sections.forEach(s => document.getElementById('section-' + s).classList.remove('visible'));
+      hideAllSections();
       setTimeout(() => {
         document.getElementById('success-msg').style.display = 'none';
         btn.disabled = false;
