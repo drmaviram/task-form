@@ -289,4 +289,118 @@
       </div>
     </div>
 
-    <!--
+    <!-- ← חדש: באנר הסבר לחד-פעמי -->
+    <div class="conditional" id="section-one-time">
+      <div class="one-time-banner">
+        🔔 התזכורת תישלח פעם אחת בלבד בתאריך שנבחר, ותימחק אוטומטית לאחר השליחה.
+      </div>
+    </div>
+
+    <div class="field">
+      <label>תאריך התחלה <span class="required">*</span></label>
+      <input type="date" id="next-run" required>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field">
+      <label>הערות</label>
+      <textarea id="description" placeholder="הערות נוספות על המשימה..."></textarea>
+    </div>
+
+    <div class="success-msg" id="success-msg">✅ המשימה נוספה בהצלחה לגיליון!</div>
+    <div class="error-msg" id="error-msg">❌ שגיאה בשמירה. נסה שוב.</div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitForm()">הוסף משימה</button>
+
+  </div>
+</div>
+
+<script>
+  const SHEET_ID = "YOUR_GOOGLE_SHEET_ID";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSMwkOqfrkh-tdM3L38GUZYuVcTwnjZOG9T9xiFpEeMkPo01zA8drzZd0kbkUar60T1A/exec";
+
+  document.querySelectorAll('input[name="freq"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      document.getElementById('section-weekly').classList.remove('visible');
+      document.getElementById('section-monthly').classList.remove('visible');
+      document.getElementById('section-interval').classList.remove('visible');
+      document.getElementById('section-one-time').classList.remove('visible'); // ← חדש
+      if (this.value === 'weekly')   document.getElementById('section-weekly').classList.add('visible');
+      if (this.value === 'monthly')  document.getElementById('section-monthly').classList.add('visible');
+      if (this.value === 'interval') document.getElementById('section-interval').classList.add('visible');
+      if (this.value === 'one_time') document.getElementById('section-one-time').classList.add('visible'); // ← חדש
+    });
+  });
+
+  document.getElementById('next-run').valueAsDate = new Date();
+
+  function getWeekdays() {
+    const days = [];
+    document.querySelectorAll('.check-btn:checked').forEach(cb => days.push(cb.value));
+    return days.join(',');
+  }
+
+  function submitForm() {
+    const task    = document.getElementById('task').value.trim();
+    const owner   = document.getElementById('owner').value.trim();
+    const mail    = document.getElementById('mail').value.trim();
+    const nextRun = document.getElementById('next-run').value;
+    const freq    = document.querySelector('input[name="freq"]:checked');
+
+    if (!task || !owner || !mail || !nextRun || !freq) {
+      alert('אנא מלא את כל השדות החובה');
+      return;
+    }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'שומר...';
+
+    const data = {
+      task:           task,
+      mail:           mail,
+      owner:          owner,
+      next_run:       nextRun,
+      frequency_type: freq.value,
+      day_of_week:    freq.value === 'weekly'   ? getWeekdays() : '',
+      day_of_month:   freq.value === 'monthly'  ? document.getElementById('day-of-month').value.trim() : '',
+      interval_days:  freq.value === 'interval' ? document.getElementById('interval-days').value : '',
+      description:    document.getElementById('description').value.trim(),
+    };
+
+    const params = new URLSearchParams(data);
+    const url = APPS_SCRIPT_URL + '?' + params.toString();
+
+    fetch(url, { method: 'GET', mode: 'no-cors' })
+    .then(() => {
+      document.getElementById('success-msg').style.display = 'block';
+      document.getElementById('error-msg').style.display = 'none';
+      btn.textContent = 'נוסף בהצלחה!';
+      document.getElementById('task').value = '';
+      document.getElementById('owner').value = '';
+      document.getElementById('mail').value = '';
+      document.getElementById('description').value = '';
+      document.getElementById('day-of-month').value = '';
+      document.getElementById('interval-days').value = '';
+      document.querySelectorAll('input[name="freq"]').forEach(r => r.checked = false);
+      document.querySelectorAll('.check-btn').forEach(c => c.checked = false);
+      document.getElementById('section-weekly').classList.remove('visible');
+      document.getElementById('section-monthly').classList.remove('visible');
+      document.getElementById('section-interval').classList.remove('visible');
+      document.getElementById('section-one-time').classList.remove('visible'); // ← חדש
+      setTimeout(() => {
+        document.getElementById('success-msg').style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = 'הוסף משימה';
+      }, 3000);
+    })
+    .catch(() => {
+      document.getElementById('error-msg').style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'הוסף משימה';
+    });
+  }
+</script>
+</body>
+</html>
