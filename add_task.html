@@ -17,12 +17,11 @@
 
   .container {
     max-width: 600px;
-    margin: 0 auto;
+    margin: 0 auto 2rem;
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     overflow: hidden;
-    margin-bottom: 2rem;
   }
 
   .header {
@@ -246,19 +245,9 @@
     padding-left: 4px;
   }
 
-  .task-list::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .task-list::-webkit-scrollbar-track {
-    background: #f0f4f8;
-    border-radius: 3px;
-  }
-
-  .task-list::-webkit-scrollbar-thumb {
-    background: #90caf9;
-    border-radius: 3px;
-  }
+  .task-list::-webkit-scrollbar { width: 6px; }
+  .task-list::-webkit-scrollbar-track { background: #f0f4f8; border-radius: 3px; }
+  .task-list::-webkit-scrollbar-thumb { background: #90caf9; border-radius: 3px; }
 
   .task-card {
     background: #f8faff;
@@ -282,12 +271,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-  }
-
-  .task-card-meta span {
-    display: flex;
-    align-items: center;
-    gap: 4px;
   }
 
   .task-card-desc {
@@ -332,9 +315,6 @@
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     חלק א׳ — הוספת משימה
-══════════════════════════════════════════ -->
 <div class="container">
   <div class="header">
     <h1>הוספת משימה תקופתית</h1>
@@ -448,9 +428,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     חלק ב׳ — צפייה במשימות לפי עובד
-══════════════════════════════════════════ -->
+<!-- חלק ב׳ — צפייה במשימות לפי עובד -->
 <div class="view-container">
   <div class="view-header">
     <h2>📋 משימות לפי עובד</h2>
@@ -466,17 +444,14 @@
       </select>
     </div>
 
-    <div id="task-list-wrapper">
-      <!-- המשימות יוצגו כאן -->
-    </div>
+    <div id="task-list-wrapper"></div>
 
   </div>
 </div>
 
 <script>
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSMwkOqfrkh-tdM3L38GUZYuVcTwnjZOG9T9xiFpEeMkPo01zA8drzZd0kbkUar60T1A/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwIJZNDZiehPvPwebFeI5G20XwMENtEo6nGGpHG2F-KGYPxQtI9TrEB1F64PfliBQY/exec";
 
-  // ── תרגום תדירות לעברית ──
   const freqLabels = {
     weekly:    'שבועי',
     monthly:   'חודשי',
@@ -486,7 +461,6 @@
     one_time:  'חד פעמי',
   };
 
-  // ── מפת סקשנים ──
   const sectionMap = {
     weekly:    'section-weekly',
     monthly:   'section-monthly',
@@ -514,25 +488,22 @@
 
   document.getElementById('next-run').valueAsDate = new Date();
 
-  // ── טעינת כלל הנתונים מהגיליון ──
+  // ── טעינת נתונים מהגיליון ──
   let allRows = [];
 
   function fetchSheetData() {
     const url = APPS_SCRIPT_URL + '?action=getAll';
-    fetch(url, { method: 'GET', mode: 'no-cors' })
-      .then(() => {
-        // no-cors לא מחזיר תוכן — נשתמש ב-JSONP דרך script tag
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        allRows = data;
+        populateOwnerSelect();
+      })
+      .catch(err => {
+        console.error('שגיאה בטעינת נתונים:', err);
+        document.getElementById('owner-select').innerHTML =
+          '<option value="">— שגיאה בטעינה —</option>';
       });
-
-    // שימוש ב-script tag לקבלת JSON
-    const script = document.createElement('script');
-    script.src = APPS_SCRIPT_URL + '?action=getAll&callback=onSheetData';
-    document.head.appendChild(script);
-  }
-
-  function onSheetData(data) {
-    allRows = data;
-    populateOwnerSelect();
   }
 
   function populateOwnerSelect() {
@@ -641,7 +612,6 @@
       document.querySelectorAll('input[name="freq"]').forEach(r => r.checked = false);
       document.querySelectorAll('.check-btn').forEach(c => c.checked = false);
       hideAllSections();
-      // רענן את רשימת המשימות
       setTimeout(() => {
         fetchSheetData();
         document.getElementById('success-msg').style.display = 'none';
@@ -656,8 +626,7 @@
     });
   }
 
-  // ── טען נתונים בעת פתיחת הדף ──
-  // נדרש עדכון ב-Google Apps Script להוסיף תמיכה ב-?action=getAll&callback=...
+  // טען נתונים בפתיחת הדף
   fetchSheetData();
 </script>
 </body>
