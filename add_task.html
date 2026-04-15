@@ -22,6 +22,7 @@
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     overflow: hidden;
+    margin-bottom: 2rem;
   }
 
   .header {
@@ -102,9 +103,7 @@
     gap: 8px;
   }
 
-  .radio-btn, .check-btn {
-    display: none;
-  }
+  .radio-btn, .check-btn { display: none; }
 
   .radio-label, .check-label {
     padding: 8px 16px;
@@ -203,10 +202,139 @@
     font-size: 14px;
     text-align: center;
   }
+
+  /* ── חלק צפייה במשימות ── */
+  .view-container {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  .view-header {
+    background: #0d47a1;
+    color: white;
+    padding: 1.5rem 2rem;
+  }
+
+  .view-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .view-header p {
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  .view-body {
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .task-list {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 4px;
+  }
+
+  .task-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .task-list::-webkit-scrollbar-track {
+    background: #f0f4f8;
+    border-radius: 3px;
+  }
+
+  .task-list::-webkit-scrollbar-thumb {
+    background: #90caf9;
+    border-radius: 3px;
+  }
+
+  .task-card {
+    background: #f8faff;
+    border: 1.5px solid #e3eafd;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .task-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a237e;
+  }
+
+  .task-card-meta {
+    font-size: 12px;
+    color: #555;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .task-card-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .task-card-desc {
+    font-size: 12px;
+    color: #777;
+    border-top: 1px solid #e3eafd;
+    padding-top: 6px;
+    margin-top: 2px;
+  }
+
+  .freq-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    background: #e8f0fe;
+    color: #1a73e8;
+  }
+
+  .freq-badge.quarterly { background: #e8f5e9; color: #2e7d32; }
+  .freq-badge.yearly    { background: #fff8e1; color: #f57f17; }
+  .freq-badge.interval  { background: #fce4ec; color: #c62828; }
+  .freq-badge.one_time  { background: #f3e5f5; color: #6a1b9a; }
+  .freq-badge.weekly    { background: #e8f0fe; color: #1a73e8; }
+  .freq-badge.monthly   { background: #e0f2f1; color: #00695c; }
+
+  .no-tasks {
+    text-align: center;
+    color: #aaa;
+    font-size: 14px;
+    padding: 2rem 0;
+  }
+
+  .loading-tasks {
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    padding: 1rem 0;
+  }
 </style>
 </head>
 <body>
 
+<!-- ══════════════════════════════════════════
+     חלק א׳ — הוספת משימה
+══════════════════════════════════════════ -->
 <div class="container">
   <div class="header">
     <h1>הוספת משימה תקופתית</h1>
@@ -320,9 +448,45 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     חלק ב׳ — צפייה במשימות לפי עובד
+══════════════════════════════════════════ -->
+<div class="view-container">
+  <div class="view-header">
+    <h2>📋 משימות לפי עובד</h2>
+    <p>בחר עובד לצפייה בכלל המשימות שלו</p>
+  </div>
+
+  <div class="view-body">
+
+    <div class="field">
+      <label>בחר עובד</label>
+      <select id="owner-select" onchange="loadTasksForOwner()">
+        <option value="">— טוען רשימת עובדים —</option>
+      </select>
+    </div>
+
+    <div id="task-list-wrapper">
+      <!-- המשימות יוצגו כאן -->
+    </div>
+
+  </div>
+</div>
+
 <script>
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSMwkOqfrkh-tdM3L38GUZYuVcTwnjZOG9T9xiFpEeMkPo01zA8drzZd0kbkUar60T1A/exec";
 
+  // ── תרגום תדירות לעברית ──
+  const freqLabels = {
+    weekly:    'שבועי',
+    monthly:   'חודשי',
+    quarterly: 'רבעוני',
+    yearly:    'שנתי',
+    interval:  'אינטרוול',
+    one_time:  'חד פעמי',
+  };
+
+  // ── מפת סקשנים ──
   const sectionMap = {
     weekly:    'section-weekly',
     monthly:   'section-monthly',
@@ -350,6 +514,82 @@
 
   document.getElementById('next-run').valueAsDate = new Date();
 
+  // ── טעינת כלל הנתונים מהגיליון ──
+  let allRows = [];
+
+  function fetchSheetData() {
+    const url = APPS_SCRIPT_URL + '?action=getAll';
+    fetch(url, { method: 'GET', mode: 'no-cors' })
+      .then(() => {
+        // no-cors לא מחזיר תוכן — נשתמש ב-JSONP דרך script tag
+      });
+
+    // שימוש ב-script tag לקבלת JSON
+    const script = document.createElement('script');
+    script.src = APPS_SCRIPT_URL + '?action=getAll&callback=onSheetData';
+    document.head.appendChild(script);
+  }
+
+  function onSheetData(data) {
+    allRows = data;
+    populateOwnerSelect();
+  }
+
+  function populateOwnerSelect() {
+    const owners = [...new Set(allRows.map(r => r.owner).filter(Boolean))].sort();
+    const sel = document.getElementById('owner-select');
+    sel.innerHTML = '<option value="">— בחר עובד —</option>';
+    owners.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      sel.appendChild(opt);
+    });
+  }
+
+  function loadTasksForOwner() {
+    const owner = document.getElementById('owner-select').value;
+    const wrapper = document.getElementById('task-list-wrapper');
+
+    if (!owner) {
+      wrapper.innerHTML = '';
+      return;
+    }
+
+    const tasks = allRows.filter(r => r.owner === owner);
+
+    if (tasks.length === 0) {
+      wrapper.innerHTML = '<div class="no-tasks">אין משימות לעובד זה</div>';
+      return;
+    }
+
+    const cards = tasks.map(t => {
+      const freq = t.frequency_type || '';
+      const badge = `<span class="freq-badge ${freq}">${freqLabels[freq] || freq}</span>`;
+      const desc = t.description ? `<div class="task-card-desc">📝 ${t.description}</div>` : '';
+      return `
+        <div class="task-card">
+          <div class="task-card-title">📋 ${t.task}</div>
+          <div class="task-card-meta">
+            <span>📅 תאריך הבא: ${formatDate(t.next_run)}</span>
+            <span>${badge}</span>
+          </div>
+          ${desc}
+        </div>
+      `;
+    }).join('');
+
+    wrapper.innerHTML = `<div class="task-list">${cards}</div>`;
+  }
+
+  function formatDate(raw) {
+    if (!raw) return '—';
+    const d = new Date(raw);
+    if (isNaN(d)) return raw;
+    return d.toLocaleDateString('he-IL');
+  }
+
+  // ── שליחת טופס ──
   function getWeekdays() {
     const days = [];
     document.querySelectorAll('.check-btn:checked').forEach(cb => days.push(cb.value));
@@ -401,7 +641,9 @@
       document.querySelectorAll('input[name="freq"]').forEach(r => r.checked = false);
       document.querySelectorAll('.check-btn').forEach(c => c.checked = false);
       hideAllSections();
+      // רענן את רשימת המשימות
       setTimeout(() => {
+        fetchSheetData();
         document.getElementById('success-msg').style.display = 'none';
         btn.disabled = false;
         btn.textContent = 'הוסף משימה';
@@ -413,6 +655,10 @@
       btn.textContent = 'הוסף משימה';
     });
   }
+
+  // ── טען נתונים בעת פתיחת הדף ──
+  // נדרש עדכון ב-Google Apps Script להוסיף תמיכה ב-?action=getAll&callback=...
+  fetchSheetData();
 </script>
 </body>
 </html>
