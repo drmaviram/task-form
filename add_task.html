@@ -305,7 +305,7 @@
     padding: 2rem 0;
   }
 
-  .loading-tasks {
+  .loading-msg {
     text-align: center;
     color: #888;
     font-size: 13px;
@@ -488,21 +488,31 @@
 
   document.getElementById('next-run').valueAsDate = new Date();
 
-  // ── טעינת נתונים מהגיליון ──
+  // ── טעינת נתונים ──
   let allRows = [];
 
   function fetchSheetData() {
+    document.getElementById('owner-select').innerHTML = '<option value="">— טוען... —</option>';
     const url = APPS_SCRIPT_URL + '?action=getAll';
-    fetch(url)
+    fetch(url, { redirect: 'follow' })
       .then(res => res.json())
       .then(data => {
         allRows = data;
         populateOwnerSelect();
       })
-      .catch(err => {
-        console.error('שגיאה בטעינת נתונים:', err);
-        document.getElementById('owner-select').innerHTML =
-          '<option value="">— שגיאה בטעינה —</option>';
+      .catch(() => {
+        // fallback: JSONP
+        window.onSheetData = function(data) {
+          allRows = data;
+          populateOwnerSelect();
+        };
+        const script = document.createElement('script');
+        script.src = url + '&callback=onSheetData';
+        script.onerror = () => {
+          document.getElementById('owner-select').innerHTML =
+            '<option value="">— שגיאה בטעינה, רענן את הדף —</option>';
+        };
+        document.head.appendChild(script);
       });
   }
 
