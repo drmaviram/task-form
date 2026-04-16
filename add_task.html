@@ -202,7 +202,6 @@
     text-align: center;
   }
 
-  /* ── חלק צפייה במשימות ── */
   .view-container {
     max-width: 600px;
     margin: 0 auto 2rem;
@@ -501,7 +500,6 @@
         populateOwnerSelect();
       })
       .catch(() => {
-        // fallback: JSONP
         window.onSheetData = function(data) {
           allRows = data;
           populateOwnerSelect();
@@ -567,7 +565,10 @@
     if (!raw) return '—';
     const d = new Date(raw);
     if (isNaN(d)) return raw;
-    return d.toLocaleDateString('he-IL');
+    const day   = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year  = d.getFullYear();
+    return `${day}/${month}/${year}`;
   }
 
   // ── שליחת טופס ──
