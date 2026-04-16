@@ -169,14 +169,14 @@
     border-top: 1px solid #e3eafd; padding-top: 6px; margin-top: 2px;
   }
 
-  .task-card-date-edit {
+  .task-card-actions {
     display: flex; align-items: center; gap: 8px;
     border-top: 1px solid #e3eafd; padding-top: 8px; flex-wrap: wrap;
   }
 
-  .task-card-date-edit label { font-size: 12px; color: #555; font-weight: 500; }
+  .task-card-actions label { font-size: 12px; color: #555; font-weight: 500; }
 
-  .task-card-date-edit input[type="date"] {
+  .task-card-actions input[type="date"] {
     padding: 5px 8px; font-size: 12px; border-radius: 6px;
     border: 1.5px solid #ddd; background: #fff; width: auto;
   }
@@ -190,6 +190,16 @@
   .update-date-btn:hover { background: #1557b0; }
   .update-date-btn:disabled { background: #aaa; cursor: not-allowed; }
 
+  .delete-task-btn {
+    background: #e53935; color: white; border: none;
+    padding: 5px 14px; border-radius: 6px; font-size: 12px;
+    cursor: pointer; font-family: inherit; transition: background 0.2s;
+    margin-right: auto;
+  }
+
+  .delete-task-btn:hover { background: #b71c1c; }
+  .delete-task-btn:disabled { background: #aaa; cursor: not-allowed; }
+
   .update-success { font-size: 12px; color: #2e7d32; }
   .update-error   { font-size: 12px; color: #c62828; }
 
@@ -201,7 +211,7 @@
   .freq-badge.quarterly { background: #e8f5e9; color: #2e7d32; }
   .freq-badge.yearly    { background: #fff8e1; color: #f57f17; }
   .freq-badge.interval  { background: #fce4ec; color: #c62828; }
-  .freq-badge.one_time  { background: #f3e5f5; color: #6a1b9a; }
+  .freq-badge.one_type  { background: #f3e5f5; color: #6a1b9a; }
   .freq-badge.weekly    { background: #e8f0fe; color: #1a73e8; }
   .freq-badge.monthly   { background: #e0f2f1; color: #00695c; }
 
@@ -424,22 +434,23 @@
     }
 
     const cards = tasks.map((t, idx) => {
-      const freq  = t.frequency_type || '';
-      const badge = `<span class="freq-badge ${freq}">${freqLabels[freq] || freq}</span>`;
-      const desc  = t.description ? `<div class="task-card-desc">📝 ${t.description}</div>` : '';
+      const freq    = t.frequency_type || '';
+      const badge   = `<span class="freq-badge ${freq}">${freqLabels[freq] || freq}</span>`;
+      const desc    = t.description ? `<div class="task-card-desc">📝 ${t.description}</div>` : '';
       const dateVal = toInputDate(t.next_run);
       return `
-        <div class="task-card">
+        <div class="task-card" id="task-card-${idx}">
           <div class="task-card-title">📋 ${t.task}</div>
           <div class="task-card-meta">
             <span>📅 תאריך הבא: ${formatDate(t.next_run)}</span>
             <span>${badge}</span>
           </div>
           ${desc}
-          <div class="task-card-date-edit">
+          <div class="task-card-actions">
+            <button class="delete-task-btn" data-idx="${idx}" onclick="deleteTask(this)">🗑️ מחק</button>
             <label>שינוי תאריך:</label>
             <input type="date" id="date-input-${idx}" value="${dateVal}">
-            <button class="update-date-btn" onclick="updateDate(${idx}, '${escapeJs(t.task)}', '${escapeJs(t.owner)}')">עדכן</button>
+            <button class="update-date-btn" data-idx="${idx}" onclick="updateDate(this)">עדכן</button>
             <span id="date-status-${idx}"></span>
           </div>
         </div>
@@ -447,15 +458,22 @@
     }).join('');
 
     wrapper.innerHTML = `<div class="task-list">${cards}</div>`;
+    wrapper._tasks = tasks;
   }
 
-  function updateDate(idx, task, owner) {
-    const input  = document.getElementById(`date-input-${idx}`);
-    const status = document.getElementById(`date-status-${idx}`);
-    const btn    = input.nextElementSibling;
+  function updateDate(btn) {
+    const idx     = parseInt(btn.dataset.idx);
+    const wrapper = document.getElementById('task-list-wrapper');
+    const t       = wrapper._tasks[idx];
+    const input   = document.getElementById(`date-input-${idx}`);
+    const status  = document.getElementById(`date-status-${idx}`);
     const newDate = input.value;
 
-    if (!newDate) { status.textContent = 'יש לבחור תאריך'; status.className = 'update-error'; return; }
+    if (!newDate) {
+      status.textContent = 'יש לבחור תאריך';
+      status.className = 'update-error';
+      return;
+    }
 
     btn.disabled = true;
     status.textContent = 'שומר...';
@@ -463,23 +481,57 @@
 
     const url = APPS_SCRIPT_URL +
       '?action=updateDate' +
-      '&task='     + encodeURIComponent(task) +
-      '&owner='    + encodeURIComponent(owner) +
+      '&task='     + encodeURIComponent(t.task) +
+      '&owner='    + encodeURIComponent(t.owner) +
       '&new_date=' + encodeURIComponent(newDate);
 
     fetch(url, { method: 'GET', mode: 'no-cors' })
       .then(() => {
         status.textContent = '✅ עודכן בהצלחה';
         status.className = 'update-success';
-        // עדכן גם את allRows
-        const row = allRows.find(r => r.task === task && r.owner === owner);
-        if (row) row.next_run = newDate;
+        t.next_run = newDate;
         btn.disabled = false;
       })
       .catch(() => {
         status.textContent = '❌ שגיאה בעדכון';
         status.className = 'update-error';
         btn.disabled = false;
+      });
+  }
+
+  function deleteTask(btn) {
+    const idx     = parseInt(btn.dataset.idx);
+    const wrapper = document.getElementById('task-list-wrapper');
+    const t       = wrapper._tasks[idx];
+
+    if (!confirm(`למחוק את המשימה:\n"${t.task}"?\n\nפעולה זו אינה ניתנת לביטול.`)) return;
+
+    btn.disabled = true;
+    btn.textContent = 'מוחק...';
+
+    const url = APPS_SCRIPT_URL +
+      '?action=deleteTask' +
+      '&task='  + encodeURIComponent(t.task) +
+      '&owner=' + encodeURIComponent(t.owner);
+
+    fetch(url, { method: 'GET', mode: 'no-cors' })
+      .then(() => {
+        // הסר את הכרטיס מה-DOM
+        const card = document.getElementById(`task-card-${idx}`);
+        if (card) card.remove();
+        // הסר מ-allRows
+        const globalIdx = allRows.findIndex(r => r.task === t.task && r.owner === t.owner);
+        if (globalIdx !== -1) allRows.splice(globalIdx, 1);
+        // אם אין יותר משימות
+        const remaining = wrapper.querySelectorAll('.task-card');
+        if (remaining.length === 0) {
+          wrapper.innerHTML = '<div class="no-tasks">אין משימות לעובד זה</div>';
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        btn.textContent = '🗑️ מחק';
+        alert('שגיאה במחיקה. נסה שוב.');
       });
   }
 
@@ -500,10 +552,6 @@
     const day   = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     return `${d.getFullYear()}-${month}-${day}`;
-  }
-
-  function escapeJs(str) {
-    return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
   }
 
   function getWeekdays() {
