@@ -169,14 +169,25 @@
     border-top: 1px solid #e3eafd; padding-top: 6px; margin-top: 2px;
   }
 
+  /* שורת פעולות — תאריך + מחיקה */
   .task-card-actions {
-    display: flex; align-items: center; gap: 8px;
-    border-top: 1px solid #e3eafd; padding-top: 8px; flex-wrap: wrap;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid #e3eafd;
+    padding-top: 8px;
   }
 
-  .task-card-actions label { font-size: 12px; color: #555; font-weight: 500; }
+  .task-card-date-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
 
-  .task-card-actions input[type="date"] {
+  .task-card-date-row label { font-size: 12px; color: #555; font-weight: 500; }
+
+  .task-card-date-row input[type="date"] {
     padding: 5px 8px; font-size: 12px; border-radius: 6px;
     border: 1.5px solid #ddd; background: #fff; width: auto;
   }
@@ -185,23 +196,30 @@
     background: #1a73e8; color: white; border: none;
     padding: 5px 14px; border-radius: 6px; font-size: 12px;
     cursor: pointer; font-family: inherit; transition: background 0.2s;
+    white-space: nowrap;
   }
 
   .update-date-btn:hover { background: #1557b0; }
   .update-date-btn:disabled { background: #aaa; cursor: not-allowed; }
 
+  .update-success { font-size: 12px; color: #2e7d32; }
+  .update-error   { font-size: 12px; color: #c62828; }
+
+  .task-card-delete-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .delete-task-btn {
     background: #e53935; color: white; border: none;
     padding: 5px 14px; border-radius: 6px; font-size: 12px;
     cursor: pointer; font-family: inherit; transition: background 0.2s;
-    margin-right: auto;
+    white-space: nowrap;
   }
 
   .delete-task-btn:hover { background: #b71c1c; }
   .delete-task-btn:disabled { background: #aaa; cursor: not-allowed; }
-
-  .update-success { font-size: 12px; color: #2e7d32; }
-  .update-error   { font-size: 12px; color: #c62828; }
 
   .freq-badge {
     display: inline-block; padding: 2px 10px; border-radius: 12px;
@@ -211,7 +229,7 @@
   .freq-badge.quarterly { background: #e8f5e9; color: #2e7d32; }
   .freq-badge.yearly    { background: #fff8e1; color: #f57f17; }
   .freq-badge.interval  { background: #fce4ec; color: #c62828; }
-  .freq-badge.one_type  { background: #f3e5f5; color: #6a1b9a; }
+  .freq-badge.one_time  { background: #f3e5f5; color: #6a1b9a; }
   .freq-badge.weekly    { background: #e8f0fe; color: #1a73e8; }
   .freq-badge.monthly   { background: #e0f2f1; color: #00695c; }
 
@@ -447,11 +465,15 @@
           </div>
           ${desc}
           <div class="task-card-actions">
-            <button class="delete-task-btn" data-idx="${idx}" onclick="deleteTask(this)">🗑️ מחק</button>
-            <label>שינוי תאריך:</label>
-            <input type="date" id="date-input-${idx}" value="${dateVal}">
-            <button class="update-date-btn" data-idx="${idx}" onclick="updateDate(this)">עדכן</button>
-            <span id="date-status-${idx}"></span>
+            <div class="task-card-date-row">
+              <label>שינוי תאריך:</label>
+              <input type="date" id="date-input-${idx}" value="${dateVal}">
+              <button class="update-date-btn" data-idx="${idx}" onclick="updateDate(this)">עדכן</button>
+              <span id="date-status-${idx}"></span>
+            </div>
+            <div class="task-card-delete-row">
+              <button class="delete-task-btn" data-idx="${idx}" onclick="deleteTask(this)">🗑️ מחק משימה</button>
+            </div>
           </div>
         </div>
       `;
@@ -516,13 +538,10 @@
 
     fetch(url, { method: 'GET', mode: 'no-cors' })
       .then(() => {
-        // הסר את הכרטיס מה-DOM
         const card = document.getElementById(`task-card-${idx}`);
         if (card) card.remove();
-        // הסר מ-allRows
         const globalIdx = allRows.findIndex(r => r.task === t.task && r.owner === t.owner);
         if (globalIdx !== -1) allRows.splice(globalIdx, 1);
-        // אם אין יותר משימות
         const remaining = wrapper.querySelectorAll('.task-card');
         if (remaining.length === 0) {
           wrapper.innerHTML = '<div class="no-tasks">אין משימות לעובד זה</div>';
@@ -530,7 +549,7 @@
       })
       .catch(() => {
         btn.disabled = false;
-        btn.textContent = '🗑️ מחק';
+        btn.textContent = '🗑️ מחק משימה';
         alert('שגיאה במחיקה. נסה שוב.');
       });
   }
