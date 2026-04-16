@@ -169,13 +169,15 @@
     border-top: 1px solid #e3eafd; padding-top: 6px; margin-top: 2px;
   }
 
-  /* שורת פעולות — תאריך + מחיקה */
   .task-card-actions {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     border-top: 1px solid #e3eafd;
     padding-top: 8px;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
   .task-card-date-row {
@@ -208,7 +210,6 @@
   .task-card-delete-row {
     display: flex;
     align-items: center;
-    gap: 8px;
   }
 
   .delete-task-btn {
@@ -472,7 +473,7 @@
               <span id="date-status-${idx}"></span>
             </div>
             <div class="task-card-delete-row">
-              <button class="delete-task-btn" data-idx="${idx}" onclick="deleteTask(this)">🗑️ מחק משימה</button>
+              <button class="delete-task-btn" data-idx="${idx}" onclick="deleteTask(this)">🗑️ מחק</button>
             </div>
           </div>
         </div>
@@ -509,13 +510,13 @@
 
     fetch(url, { method: 'GET', mode: 'no-cors' })
       .then(() => {
-        status.textContent = '✅ עודכן בהצלחה';
+        status.textContent = '✅ עודכן';
         status.className = 'update-success';
         t.next_run = newDate;
         btn.disabled = false;
       })
       .catch(() => {
-        status.textContent = '❌ שגיאה בעדכון';
+        status.textContent = '❌ שגיאה';
         status.className = 'update-error';
         btn.disabled = false;
       });
@@ -549,7 +550,7 @@
       })
       .catch(() => {
         btn.disabled = false;
-        btn.textContent = '🗑️ מחק משימה';
+        btn.textContent = '🗑️ מחק';
         alert('שגיאה במחיקה. נסה שוב.');
       });
   }
