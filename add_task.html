@@ -30,16 +30,8 @@
     padding: 1.5rem 2rem;
   }
 
-  .header h1 {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .header p {
-    font-size: 13px;
-    opacity: 0.85;
-  }
+  .header h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .header p  { font-size: 13px; opacity: 0.85; }
 
   .form-body {
     padding: 1.5rem 2rem;
@@ -48,28 +40,11 @@
     gap: 1.2rem;
   }
 
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+  .field { display: flex; flex-direction: column; gap: 6px; }
 
-  label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-  }
-
-  label .required {
-    color: #e53935;
-    margin-right: 2px;
-  }
-
-  .hint {
-    font-size: 12px;
-    color: #888;
-    margin-top: 2px;
-  }
+  label { font-size: 14px; font-weight: 500; color: #333; }
+  label .required { color: #e53935; margin-right: 2px; }
+  .hint { font-size: 12px; color: #888; margin-top: 2px; }
 
   input[type="text"],
   input[type="email"],
@@ -96,12 +71,7 @@
 
   textarea { resize: vertical; min-height: 80px; }
 
-  .radio-group, .checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
+  .radio-group, .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
   .radio-btn, .check-btn { display: none; }
 
   .radio-label, .check-label {
@@ -117,131 +87,64 @@
   }
 
   .radio-btn:checked + .radio-label {
-    background: #1a73e8;
-    border-color: #1a73e8;
-    color: white;
-    font-weight: 500;
+    background: #1a73e8; border-color: #1a73e8; color: white; font-weight: 500;
   }
 
   .check-btn:checked + .check-label {
-    background: #e8f0fe;
-    border-color: #1a73e8;
-    color: #1a73e8;
-    font-weight: 500;
+    background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; font-weight: 500;
   }
 
-  .conditional {
-    display: none;
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-
+  .conditional { display: none; flex-direction: column; gap: 1.2rem; }
   .conditional.visible { display: flex; }
 
   .one-time-banner {
-    background: #f3e5f5;
-    border: 1.5px solid #ce93d8;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-    color: #6a1b9a;
+    background: #f3e5f5; border: 1.5px solid #ce93d8;
+    border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #6a1b9a;
   }
 
   .quarterly-banner {
-    background: #e8f5e9;
-    border: 1.5px solid #a5d6a7;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-    color: #2e7d32;
+    background: #e8f5e9; border: 1.5px solid #a5d6a7;
+    border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #2e7d32;
   }
 
-  .divider {
-    border: none;
-    border-top: 1px solid #eee;
-    margin: 0.2rem 0;
-  }
+  .divider { border: none; border-top: 1px solid #eee; margin: 0.2rem 0; }
 
   .submit-btn {
-    background: #1a73e8;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    width: 100%;
-    transition: background 0.2s;
-    font-family: inherit;
-    margin-top: 0.5rem;
+    background: #1a73e8; color: white; border: none;
+    padding: 12px 24px; border-radius: 8px; font-size: 15px;
+    font-weight: 500; cursor: pointer; width: 100%;
+    transition: background 0.2s; font-family: inherit; margin-top: 0.5rem;
   }
 
   .submit-btn:hover { background: #1557b0; }
   .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
 
   .success-msg {
-    display: none;
-    background: #e8f5e9;
-    color: #2e7d32;
-    border: 1px solid #a5d6a7;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 14px;
-    text-align: center;
+    display: none; background: #e8f5e9; color: #2e7d32;
+    border: 1px solid #a5d6a7; border-radius: 8px;
+    padding: 12px 16px; font-size: 14px; text-align: center;
   }
 
   .error-msg {
-    display: none;
-    background: #ffebee;
-    color: #c62828;
-    border: 1px solid #ef9a9a;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 14px;
-    text-align: center;
+    display: none; background: #ffebee; color: #c62828;
+    border: 1px solid #ef9a9a; border-radius: 8px;
+    padding: 12px 16px; font-size: 14px; text-align: center;
   }
 
   .view-container {
-    max-width: 600px;
-    margin: 0 auto 2rem;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    overflow: hidden;
+    max-width: 600px; margin: 0 auto 2rem; background: #fff;
+    border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden;
   }
 
-  .view-header {
-    background: #0d47a1;
-    color: white;
-    padding: 1.5rem 2rem;
-  }
+  .view-header { background: #0d47a1; color: white; padding: 1.5rem 2rem; }
+  .view-header h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .view-header p  { font-size: 13px; opacity: 0.85; }
 
-  .view-header h2 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .view-header p {
-    font-size: 13px;
-    opacity: 0.85;
-  }
-
-  .view-body {
-    padding: 1.5rem 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-  }
+  .view-body { padding: 1.5rem 2rem; display: flex; flex-direction: column; gap: 1.2rem; }
 
   .task-list {
-    max-height: 400px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-left: 4px;
+    max-height: 500px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 10px; padding-left: 4px;
   }
 
   .task-list::-webkit-scrollbar { width: 6px; }
@@ -249,45 +152,50 @@
   .task-list::-webkit-scrollbar-thumb { background: #90caf9; border-radius: 3px; }
 
   .task-card {
-    background: #f8faff;
-    border: 1.5px solid #e3eafd;
-    border-radius: 10px;
-    padding: 12px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    background: #f8faff; border: 1.5px solid #e3eafd;
+    border-radius: 10px; padding: 12px 14px;
+    display: flex; flex-direction: column; gap: 8px;
   }
 
-  .task-card-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1a237e;
-  }
+  .task-card-title { font-size: 14px; font-weight: 600; color: #1a237e; }
 
   .task-card-meta {
-    font-size: 12px;
-    color: #555;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    font-size: 12px; color: #555;
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
   }
 
   .task-card-desc {
-    font-size: 12px;
-    color: #777;
-    border-top: 1px solid #e3eafd;
-    padding-top: 6px;
-    margin-top: 2px;
+    font-size: 12px; color: #777;
+    border-top: 1px solid #e3eafd; padding-top: 6px; margin-top: 2px;
   }
 
+  .task-card-date-edit {
+    display: flex; align-items: center; gap: 8px;
+    border-top: 1px solid #e3eafd; padding-top: 8px; flex-wrap: wrap;
+  }
+
+  .task-card-date-edit label { font-size: 12px; color: #555; font-weight: 500; }
+
+  .task-card-date-edit input[type="date"] {
+    padding: 5px 8px; font-size: 12px; border-radius: 6px;
+    border: 1.5px solid #ddd; background: #fff; width: auto;
+  }
+
+  .update-date-btn {
+    background: #1a73e8; color: white; border: none;
+    padding: 5px 14px; border-radius: 6px; font-size: 12px;
+    cursor: pointer; font-family: inherit; transition: background 0.2s;
+  }
+
+  .update-date-btn:hover { background: #1557b0; }
+  .update-date-btn:disabled { background: #aaa; cursor: not-allowed; }
+
+  .update-success { font-size: 12px; color: #2e7d32; }
+  .update-error   { font-size: 12px; color: #c62828; }
+
   .freq-badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 500;
-    background: #e8f0fe;
-    color: #1a73e8;
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 500; background: #e8f0fe; color: #1a73e8;
   }
 
   .freq-badge.quarterly { background: #e8f5e9; color: #2e7d32; }
@@ -297,19 +205,7 @@
   .freq-badge.weekly    { background: #e8f0fe; color: #1a73e8; }
   .freq-badge.monthly   { background: #e0f2f1; color: #00695c; }
 
-  .no-tasks {
-    text-align: center;
-    color: #aaa;
-    font-size: 14px;
-    padding: 2rem 0;
-  }
-
-  .loading-msg {
-    text-align: center;
-    color: #888;
-    font-size: 13px;
-    padding: 1rem 0;
-  }
+  .no-tasks { text-align: center; color: #aaa; font-size: 14px; padding: 2rem 0; }
 </style>
 </head>
 <body>
@@ -427,24 +323,20 @@
   </div>
 </div>
 
-<!-- חלק ב׳ — צפייה במשימות לפי עובד -->
 <div class="view-container">
   <div class="view-header">
     <h2>📋 משימות לפי עובד</h2>
-    <p>בחר עובד לצפייה בכלל המשימות שלו</p>
+    <p>בחר עובד לצפייה ועדכון משימות</p>
   </div>
 
   <div class="view-body">
-
     <div class="field">
       <label>בחר עובד</label>
       <select id="owner-select" onchange="loadTasksForOwner()">
         <option value="">— טוען רשימת עובדים —</option>
       </select>
     </div>
-
     <div id="task-list-wrapper"></div>
-
   </div>
 </div>
 
@@ -452,21 +344,14 @@
   const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwIJZNDZiehPvPwebFeI5G20XwMENtEo6nGGpHG2F-KGYPxQtI9TrEB1F64PfliBQY/exec";
 
   const freqLabels = {
-    weekly:    'שבועי',
-    monthly:   'חודשי',
-    quarterly: 'רבעוני',
-    yearly:    'שנתי',
-    interval:  'אינטרוול',
-    one_time:  'חד פעמי',
+    weekly: 'שבועי', monthly: 'חודשי', quarterly: 'רבעוני',
+    yearly: 'שנתי', interval: 'אינטרוול', one_time: 'חד פעמי',
   };
 
   const sectionMap = {
-    weekly:    'section-weekly',
-    monthly:   'section-monthly',
-    quarterly: 'section-quarterly',
-    yearly:    null,
-    interval:  'section-interval',
-    one_time:  'section-one-time',
+    weekly: 'section-weekly', monthly: 'section-monthly',
+    quarterly: 'section-quarterly', yearly: null,
+    interval: 'section-interval', one_time: 'section-one-time',
   };
 
   function hideAllSections() {
@@ -487,7 +372,6 @@
 
   document.getElementById('next-run').valueAsDate = new Date();
 
-  // ── טעינת נתונים ──
   let allRows = [];
 
   function fetchSheetData() {
@@ -530,10 +414,7 @@
     const owner = document.getElementById('owner-select').value;
     const wrapper = document.getElementById('task-list-wrapper');
 
-    if (!owner) {
-      wrapper.innerHTML = '';
-      return;
-    }
+    if (!owner) { wrapper.innerHTML = ''; return; }
 
     const tasks = allRows.filter(r => r.owner === owner);
 
@@ -542,10 +423,11 @@
       return;
     }
 
-    const cards = tasks.map(t => {
-      const freq = t.frequency_type || '';
+    const cards = tasks.map((t, idx) => {
+      const freq  = t.frequency_type || '';
       const badge = `<span class="freq-badge ${freq}">${freqLabels[freq] || freq}</span>`;
-      const desc = t.description ? `<div class="task-card-desc">📝 ${t.description}</div>` : '';
+      const desc  = t.description ? `<div class="task-card-desc">📝 ${t.description}</div>` : '';
+      const dateVal = toInputDate(t.next_run);
       return `
         <div class="task-card">
           <div class="task-card-title">📋 ${t.task}</div>
@@ -554,11 +436,51 @@
             <span>${badge}</span>
           </div>
           ${desc}
+          <div class="task-card-date-edit">
+            <label>שינוי תאריך:</label>
+            <input type="date" id="date-input-${idx}" value="${dateVal}">
+            <button class="update-date-btn" onclick="updateDate(${idx}, '${escapeJs(t.task)}', '${escapeJs(t.owner)}')">עדכן</button>
+            <span id="date-status-${idx}"></span>
+          </div>
         </div>
       `;
     }).join('');
 
     wrapper.innerHTML = `<div class="task-list">${cards}</div>`;
+  }
+
+  function updateDate(idx, task, owner) {
+    const input  = document.getElementById(`date-input-${idx}`);
+    const status = document.getElementById(`date-status-${idx}`);
+    const btn    = input.nextElementSibling;
+    const newDate = input.value;
+
+    if (!newDate) { status.textContent = 'יש לבחור תאריך'; status.className = 'update-error'; return; }
+
+    btn.disabled = true;
+    status.textContent = 'שומר...';
+    status.className = '';
+
+    const url = APPS_SCRIPT_URL +
+      '?action=updateDate' +
+      '&task='     + encodeURIComponent(task) +
+      '&owner='    + encodeURIComponent(owner) +
+      '&new_date=' + encodeURIComponent(newDate);
+
+    fetch(url, { method: 'GET', mode: 'no-cors' })
+      .then(() => {
+        status.textContent = '✅ עודכן בהצלחה';
+        status.className = 'update-success';
+        // עדכן גם את allRows
+        const row = allRows.find(r => r.task === task && r.owner === owner);
+        if (row) row.next_run = newDate;
+        btn.disabled = false;
+      })
+      .catch(() => {
+        status.textContent = '❌ שגיאה בעדכון';
+        status.className = 'update-error';
+        btn.disabled = false;
+      });
   }
 
   function formatDate(raw) {
@@ -571,7 +493,19 @@
     return `${day}/${month}/${year}`;
   }
 
-  // ── שליחת טופס ──
+  function toInputDate(raw) {
+    if (!raw) return '';
+    const d = new Date(raw);
+    if (isNaN(d)) return '';
+    const day   = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    return `${d.getFullYear()}-${month}-${day}`;
+  }
+
+  function escapeJs(str) {
+    return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
+  }
+
   function getWeekdays() {
     const days = [];
     document.querySelectorAll('.check-btn:checked').forEach(cb => days.push(cb.value));
@@ -637,7 +571,6 @@
     });
   }
 
-  // טען נתונים בפתיחת הדף
   fetchSheetData();
 </script>
 </body>
