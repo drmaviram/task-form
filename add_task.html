@@ -166,7 +166,7 @@
 
   .task-card-desc {
     font-size: 12px; color: #777;
-    border-top: 1px solid #e3eafd; padding-top: 6px; margin-top: 2px;
+    border-top: 1px solid #e3eafd; padding-top: 6px;
   }
 
   /* שורת פעולות ראשית */
@@ -177,14 +177,14 @@
     justify-content: space-between;
     border-top: 1px solid #e3eafd;
     padding-top: 8px;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: nowrap;
   }
 
   .task-card-date-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     flex-wrap: nowrap;
     flex-shrink: 1;
     min-width: 0;
@@ -197,103 +197,70 @@
   .task-card-date-row input[type="date"] {
     padding: 5px 4px; font-size: 11px; border-radius: 6px;
     border: 1.5px solid #ddd; background: #fff;
-    width: 120px; flex-shrink: 1;
+    width: 115px; flex-shrink: 1;
   }
 
-  .update-date-btn {
-    background: #1a73e8; color: white; border: none;
-    padding: 5px 10px; border-radius: 6px; font-size: 12px;
+  .btn-small {
+    border: none; border-radius: 6px; font-size: 11px;
     cursor: pointer; font-family: inherit; transition: background 0.2s;
-    white-space: nowrap; flex-shrink: 0;
+    white-space: nowrap; flex-shrink: 0; padding: 5px 8px;
+    color: white;
   }
 
-  .update-date-btn:hover { background: #1557b0; }
-  .update-date-btn:disabled { background: #aaa; cursor: not-allowed; }
+  .btn-update  { background: #1a73e8; }
+  .btn-update:hover  { background: #1557b0; }
+
+  .btn-note    { background: #00897b; }
+  .btn-note:hover    { background: #00695c; }
+
+  .btn-transfer { background: #7b1fa2; }
+  .btn-transfer:hover { background: #4a148c; }
+
+  .btn-delete  { background: #e53935; }
+  .btn-delete:hover  { background: #b71c1c; }
+
+  .btn-small:disabled { background: #aaa; cursor: not-allowed; }
 
   .update-success { font-size: 11px; color: #2e7d32; white-space: nowrap; }
   .update-error   { font-size: 11px; color: #c62828; white-space: nowrap; }
 
-  .task-card-delete-row {
-    display: flex; align-items: center; flex-shrink: 0;
-  }
-
-  .delete-task-btn {
-    background: #e53935; color: white; border: none;
-    padding: 5px 10px; border-radius: 6px; font-size: 12px;
-    cursor: pointer; font-family: inherit; transition: background 0.2s;
-    white-space: nowrap;
-  }
-
-  .delete-task-btn:hover { background: #b71c1c; }
-  .delete-task-btn:disabled { background: #aaa; cursor: not-allowed; }
-
-  /* הערות */
-  .task-card-note-row {
-    display: flex;
+  /* פאנל הערות */
+  .task-card-panel {
+    display: none;
     flex-direction: column;
     gap: 6px;
     border-top: 1px solid #e3eafd;
     padding-top: 8px;
+    animation: fadeIn 0.15s ease;
   }
 
-  .task-card-note-row label {
+  .task-card-panel.open { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .task-card-panel label {
     font-size: 12px; color: #555; font-weight: 500;
   }
 
-  .task-card-note-row textarea {
+  .task-card-panel textarea {
     font-size: 12px; padding: 6px 8px; border-radius: 6px;
     border: 1.5px solid #ddd; background: #fff;
     min-height: 55px; resize: vertical; direction: rtl;
-    font-family: inherit;
+    font-family: inherit; width: 100%;
   }
 
-  .note-actions {
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  .update-note-btn {
-    background: #00897b; color: white; border: none;
-    padding: 5px 12px; border-radius: 6px; font-size: 12px;
-    cursor: pointer; font-family: inherit; transition: background 0.2s;
-    white-space: nowrap;
-  }
-
-  .update-note-btn:hover { background: #00695c; }
-  .update-note-btn:disabled { background: #aaa; cursor: not-allowed; }
-
-  /* העברת משימה */
-  .task-card-transfer-row {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    border-top: 1px solid #e3eafd;
-    padding-top: 8px;
-  }
-
-  .task-card-transfer-row label {
-    font-size: 12px; color: #555; font-weight: 500;
-  }
-
-  .transfer-inputs {
-    display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
-  }
-
-  .transfer-inputs input[type="text"],
-  .transfer-inputs input[type="email"] {
+  .task-card-panel input[type="text"],
+  .task-card-panel input[type="email"] {
     font-size: 12px; padding: 5px 8px; border-radius: 6px;
-    border: 1.5px solid #ddd; background: #fff;
-    flex: 1; min-width: 120px;
+    border: 1.5px solid #ddd; background: #fff; width: 100%;
   }
 
-  .transfer-btn {
-    background: #7b1fa2; color: white; border: none;
-    padding: 5px 12px; border-radius: 6px; font-size: 12px;
-    cursor: pointer; font-family: inherit; transition: background 0.2s;
-    white-space: nowrap;
+  .panel-actions {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   }
-
-  .transfer-btn:hover { background: #4a148c; }
-  .transfer-btn:disabled { background: #aaa; cursor: not-allowed; }
 
   .freq-badge {
     display: inline-block; padding: 2px 10px; border-radius: 12px;
@@ -481,20 +448,14 @@
     const url = APPS_SCRIPT_URL + '?action=getAll';
     fetch(url, { redirect: 'follow' })
       .then(res => res.json())
-      .then(data => {
-        allRows = data;
-        populateOwnerSelect();
-      })
+      .then(data => { allRows = data; populateOwnerSelect(); })
       .catch(() => {
-        window.onSheetData = function(data) {
-          allRows = data;
-          populateOwnerSelect();
-        };
+        window.onSheetData = function(data) { allRows = data; populateOwnerSelect(); };
         const script = document.createElement('script');
         script.src = url + '&callback=onSheetData';
         script.onerror = () => {
           document.getElementById('owner-select').innerHTML =
-            '<option value="">— שגיאה בטעינה, רענן את הדף —</option>';
+            '<option value="">— שגיאה בטעינה —</option>';
         };
         document.head.appendChild(script);
       });
@@ -526,9 +487,9 @@
     }
 
     const cards = tasks.map((t, idx) => {
-      const freq    = t.frequency_type || '';
-      const badge   = `<span class="freq-badge ${freq}">${freqLabels[freq] || freq}</span>`;
-      const desc    = t.description ? `<div class="task-card-desc">${t.description}</div>` : '';
+      const freq  = t.frequency_type || '';
+      const badge = `<span class="freq-badge ${freq}">${freqLabels[freq] || freq}</span>`;
+      const desc  = t.description ? `<div class="task-card-desc">${t.description}</div>` : '';
       const dateVal = toInputDate(t.next_run);
       return `
         <div class="task-card" id="task-card-${idx}">
@@ -539,36 +500,36 @@
           </div>
           ${desc}
 
-          <!-- שינוי תאריך + מחיקה -->
+          <!-- שורת כפתורים ראשית -->
           <div class="task-card-actions">
             <div class="task-card-date-row">
-              <label>שינוי תאריך:</label>
+              <label>תאריך:</label>
               <input type="date" id="date-input-${idx}" value="${dateVal}">
-              <button class="update-date-btn" data-idx="${idx}" onclick="updateDate(this)">עדכן</button>
+              <button class="btn-small btn-update" data-idx="${idx}" onclick="updateDate(this)">עדכן</button>
+              <button class="btn-small btn-note"   data-idx="${idx}" onclick="togglePanel(this,'note')">הערות</button>
+              <button class="btn-small btn-transfer" data-idx="${idx}" onclick="togglePanel(this,'transfer')">העבר</button>
               <span id="date-status-${idx}"></span>
             </div>
-            <div class="task-card-delete-row">
-              <button class="delete-task-btn" data-idx="${idx}" onclick="deleteTask(this)">מחק</button>
-            </div>
+            <button class="btn-small btn-delete" data-idx="${idx}" onclick="deleteTask(this)">מחק</button>
           </div>
 
-          <!-- עדכון הערות -->
-          <div class="task-card-note-row">
+          <!-- פאנל הערות (סגור כברירת מחדל) -->
+          <div class="task-card-panel" id="note-panel-${idx}">
             <label>הערות:</label>
             <textarea id="note-input-${idx}" placeholder="הוסף או ערוך הערה...">${t.description || ''}</textarea>
-            <div class="note-actions">
-              <button class="update-note-btn" data-idx="${idx}" onclick="updateNote(this)">שמור הערה</button>
+            <div class="panel-actions">
+              <button class="btn-small btn-note" data-idx="${idx}" onclick="updateNote(this)">שמור הערה</button>
               <span id="note-status-${idx}"></span>
             </div>
           </div>
 
-          <!-- העברת משימה לעובד אחר -->
-          <div class="task-card-transfer-row">
+          <!-- פאנל העברה (סגור כברירת מחדל) -->
+          <div class="task-card-panel" id="transfer-panel-${idx}">
             <label>העברה לעובד אחר:</label>
-            <div class="transfer-inputs">
-              <input type="text"  id="new-owner-${idx}" placeholder="שם עובד חדש">
-              <input type="email" id="new-mail-${idx}"  placeholder="מייל עובד חדש">
-              <button class="transfer-btn" data-idx="${idx}" onclick="transferTask(this)">העבר</button>
+            <input type="text"  id="new-owner-${idx}" placeholder="שם עובד חדש">
+            <input type="email" id="new-mail-${idx}"  placeholder="מייל עובד חדש" style="margin-top:5px">
+            <div class="panel-actions" style="margin-top:4px">
+              <button class="btn-small btn-transfer" data-idx="${idx}" onclick="transferTask(this)">העבר</button>
               <span id="transfer-status-${idx}"></span>
             </div>
           </div>
@@ -581,15 +542,31 @@
     wrapper._tasks = tasks;
   }
 
+  function togglePanel(btn, type) {
+    const idx       = parseInt(btn.dataset.idx);
+    const notePanel = document.getElementById('note-panel-' + idx);
+    const transPanel = document.getElementById('transfer-panel-' + idx);
+
+    if (type === 'note') {
+      const isOpen = notePanel.classList.contains('open');
+      notePanel.classList.toggle('open', !isOpen);
+      transPanel.classList.remove('open');
+    } else {
+      const isOpen = transPanel.classList.contains('open');
+      transPanel.classList.toggle('open', !isOpen);
+      notePanel.classList.remove('open');
+    }
+  }
+
   function updateDate(btn) {
-    const idx     = parseInt(btn.dataset.idx);
+    const idx    = parseInt(btn.dataset.idx);
     const wrapper = document.getElementById('task-list-wrapper');
-    const t       = wrapper._tasks[idx];
-    const input   = document.getElementById('date-input-' + idx);
-    const status  = document.getElementById('date-status-' + idx);
+    const t      = wrapper._tasks[idx];
+    const input  = document.getElementById('date-input-' + idx);
+    const status = document.getElementById('date-status-' + idx);
     const newDate = input.value;
 
-    if (!newDate) { status.textContent = 'יש לבחור תאריך'; status.className = 'update-error'; return; }
+    if (!newDate) { status.textContent = 'בחר תאריך'; status.className = 'update-error'; return; }
 
     btn.disabled = true;
     status.textContent = 'שומר...';
@@ -616,11 +593,11 @@
   }
 
   function updateNote(btn) {
-    const idx     = parseInt(btn.dataset.idx);
+    const idx    = parseInt(btn.dataset.idx);
     const wrapper = document.getElementById('task-list-wrapper');
-    const t       = wrapper._tasks[idx];
-    const input   = document.getElementById('note-input-' + idx);
-    const status  = document.getElementById('note-status-' + idx);
+    const t      = wrapper._tasks[idx];
+    const input  = document.getElementById('note-input-' + idx);
+    const status = document.getElementById('note-status-' + idx);
     const newNote = input.value.trim();
 
     btn.disabled = true;
@@ -655,7 +632,7 @@
     const newMail  = document.getElementById('new-mail-'  + idx).value.trim();
     const status   = document.getElementById('transfer-status-' + idx);
 
-    if (!newOwner) { status.textContent = 'יש להזין שם עובד'; status.className = 'update-error'; return; }
+    if (!newOwner) { status.textContent = 'הזן שם עובד'; status.className = 'update-error'; return; }
 
     if (!confirm('להעביר את המשימה "' + t.task + '" ל-' + newOwner + '?')) return;
 
@@ -672,9 +649,6 @@
 
     fetch(url, { method: 'GET', mode: 'no-cors' })
       .then(() => {
-        status.textContent = 'הועבר בהצלחה';
-        status.className = 'update-success';
-        // הסר את הכרטיס מהרשימה הנוכחית
         const card = document.getElementById('task-card-' + idx);
         if (card) card.remove();
         const globalIdx = allRows.findIndex(r => r.task === t.task && r.owner === t.owner);
@@ -695,9 +669,9 @@
   }
 
   function deleteTask(btn) {
-    const idx     = parseInt(btn.dataset.idx);
+    const idx    = parseInt(btn.dataset.idx);
     const wrapper = document.getElementById('task-list-wrapper');
-    const t       = wrapper._tasks[idx];
+    const t      = wrapper._tasks[idx];
 
     if (!confirm('למחוק את המשימה:\n"' + t.task + '"?\n\nפעולה זו אינה ניתנת לביטול.')) return;
 
@@ -733,8 +707,7 @@
     if (isNaN(d)) return raw;
     const day   = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year  = d.getFullYear();
-    return day + '/' + month + '/' + year;
+    return day + '/' + month + '/' + d.getFullYear();
   }
 
   function toInputDate(raw) {
