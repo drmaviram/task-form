@@ -169,7 +169,6 @@
     border-top: 1px solid #e3eafd; padding-top: 6px;
   }
 
-  /* שורת פעולות ראשית */
   .task-card-actions {
     display: flex;
     flex-direction: row;
@@ -207,24 +206,19 @@
     color: white;
   }
 
-  .btn-update  { background: #1a73e8; }
-  .btn-update:hover  { background: #1557b0; }
-
-  .btn-note    { background: #00897b; }
-  .btn-note:hover    { background: #00695c; }
-
+  .btn-update   { background: #1a73e8; }
+  .btn-update:hover   { background: #1557b0; }
+  .btn-note     { background: #00897b; }
+  .btn-note:hover     { background: #00695c; }
   .btn-transfer { background: #7b1fa2; }
   .btn-transfer:hover { background: #4a148c; }
-
-  .btn-delete  { background: #e53935; }
-  .btn-delete:hover  { background: #b71c1c; }
-
+  .btn-delete   { background: #e53935; }
+  .btn-delete:hover   { background: #b71c1c; }
   .btn-small:disabled { background: #aaa; cursor: not-allowed; }
 
   .update-success { font-size: 11px; color: #2e7d32; white-space: nowrap; }
   .update-error   { font-size: 11px; color: #c62828; white-space: nowrap; }
 
-  /* פאנל הערות */
   .task-card-panel {
     display: none;
     flex-direction: column;
@@ -252,10 +246,13 @@
     font-family: inherit; width: 100%;
   }
 
-  .task-card-panel input[type="text"],
-  .task-card-panel input[type="email"] {
+  .task-card-panel select {
     font-size: 12px; padding: 5px 8px; border-radius: 6px;
     border: 1.5px solid #ddd; background: #fff; width: 100%;
+  }
+
+  .transfer-mail-display {
+    font-size: 11px; color: #777; padding: 4px 0;
   }
 
   .panel-actions {
@@ -423,6 +420,9 @@
     interval: 'section-interval', one_time: 'section-one-time',
   };
 
+  // מפה של שם עובד → מייל
+  let ownerMailMap = {};
+
   function hideAllSections() {
     Object.values(sectionMap).forEach(id => {
       if (!id) return;
@@ -448,9 +448,9 @@
     const url = APPS_SCRIPT_URL + '?action=getAll';
     fetch(url, { redirect: 'follow' })
       .then(res => res.json())
-      .then(data => { allRows = data; populateOwnerSelect(); })
+      .then(data => { allRows = data; buildOwnerMailMap(); populateOwnerSelect(); })
       .catch(() => {
-        window.onSheetData = function(data) { allRows = data; populateOwnerSelect(); };
+        window.onSheetData = function(data) { allRows = data; buildOwnerMailMap(); populateOwnerSelect(); };
         const script = document.createElement('script');
         script.src = url + '&callback=onSheetData';
         script.onerror = () => {
@@ -459,6 +459,13 @@
         };
         document.head.appendChild(script);
       });
+  }
+
+  function buildOwnerMailMap() {
+    ownerMailMap = {};
+    allRows.forEach(r => {
+      if (r.owner && r.mail) ownerMailMap[r.owner] = r.mail;
+    });
   }
 
   function populateOwnerSelect() {
@@ -471,6 +478,31 @@
       opt.textContent = name;
       sel.appendChild(opt);
     });
+  }
+
+  function buildTransferSelect(idx, currentOwner) {
+    const owners = [...new Set(allRows.map(r => r.owner).filter(Boolean))].sort();
+    const sel = document.getElementById('transfer-select-' + idx);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">— בחר עובד —</option>';
+    owners.forEach(name => {
+      if (name === currentOwner) return;
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      sel.appendChild(opt);
+    });
+  }
+
+  function onTransferSelectChange(idx) {
+    const sel      = document.getElementById('transfer-select-' + idx);
+    const mailDisp = document.getElementById('transfer-mail-' + idx);
+    const selectedOwner = sel.value;
+    if (selectedOwner && ownerMailMap[selectedOwner]) {
+      mailDisp.textContent = 'מייל: ' + ownerMailMap[selectedOwner];
+    } else {
+      mailDisp.textContent = '';
+    }
   }
 
   function loadTasksForOwner() {
@@ -487,9 +519,9 @@
     }
 
     const cards = tasks.map((t, idx) => {
-      const freq  = t.frequency_type || '';
-      const badge = `<span class="freq-badge ${freq}">${freqLabels[freq] || freq}</span>`;
-      const desc  = t.description ? `<div class="task-card-desc">${t.description}</div>` : '';
+      const freq    = t.frequency_type || '';
+      const badge   = `<span class="freq-badge ${freq}">${freqLabels[freq] || freq}</span>`;
+      const desc    = t.description ? `<div class="task-card-desc">${t.description}</div>` : '';
       const dateVal = toInputDate(t.next_run);
       return `
         <div class="task-card" id="task-card-${idx}">
@@ -500,20 +532,19 @@
           </div>
           ${desc}
 
-          <!-- שורת כפתורים ראשית -->
           <div class="task-card-actions">
             <div class="task-card-date-row">
               <label>תאריך:</label>
               <input type="date" id="date-input-${idx}" value="${dateVal}">
-              <button class="btn-small btn-update" data-idx="${idx}" onclick="updateDate(this)">עדכן</button>
-              <button class="btn-small btn-note"   data-idx="${idx}" onclick="togglePanel(this,'note')">הערות</button>
+              <button class="btn-small btn-update"   data-idx="${idx}" onclick="updateDate(this)">עדכן</button>
+              <button class="btn-small btn-note"     data-idx="${idx}" onclick="togglePanel(this,'note')">הערות</button>
               <button class="btn-small btn-transfer" data-idx="${idx}" onclick="togglePanel(this,'transfer')">העבר</button>
               <span id="date-status-${idx}"></span>
             </div>
             <button class="btn-small btn-delete" data-idx="${idx}" onclick="deleteTask(this)">מחק</button>
           </div>
 
-          <!-- פאנל הערות (סגור כברירת מחדל) -->
+          <!-- פאנל הערות -->
           <div class="task-card-panel" id="note-panel-${idx}">
             <label>הערות:</label>
             <textarea id="note-input-${idx}" placeholder="הוסף או ערוך הערה...">${t.description || ''}</textarea>
@@ -523,12 +554,14 @@
             </div>
           </div>
 
-          <!-- פאנל העברה (סגור כברירת מחדל) -->
+          <!-- פאנל העברה -->
           <div class="task-card-panel" id="transfer-panel-${idx}">
             <label>העברה לעובד אחר:</label>
-            <input type="text"  id="new-owner-${idx}" placeholder="שם עובד חדש">
-            <input type="email" id="new-mail-${idx}"  placeholder="מייל עובד חדש" style="margin-top:5px">
-            <div class="panel-actions" style="margin-top:4px">
+            <select id="transfer-select-${idx}" onchange="onTransferSelectChange(${idx})">
+              <option value="">— בחר עובד —</option>
+            </select>
+            <div class="transfer-mail-display" id="transfer-mail-${idx}"></div>
+            <div class="panel-actions">
               <button class="btn-small btn-transfer" data-idx="${idx}" onclick="transferTask(this)">העבר</button>
               <span id="transfer-status-${idx}"></span>
             </div>
@@ -540,11 +573,14 @@
 
     wrapper.innerHTML = `<div class="task-list">${cards}</div>`;
     wrapper._tasks = tasks;
+
+    // מלא את רשימות ההעברה
+    tasks.forEach((t, idx) => buildTransferSelect(idx, t.owner));
   }
 
   function togglePanel(btn, type) {
-    const idx       = parseInt(btn.dataset.idx);
-    const notePanel = document.getElementById('note-panel-' + idx);
+    const idx        = parseInt(btn.dataset.idx);
+    const notePanel  = document.getElementById('note-panel-'     + idx);
     const transPanel = document.getElementById('transfer-panel-' + idx);
 
     if (type === 'note') {
@@ -559,11 +595,11 @@
   }
 
   function updateDate(btn) {
-    const idx    = parseInt(btn.dataset.idx);
+    const idx     = parseInt(btn.dataset.idx);
     const wrapper = document.getElementById('task-list-wrapper');
-    const t      = wrapper._tasks[idx];
-    const input  = document.getElementById('date-input-' + idx);
-    const status = document.getElementById('date-status-' + idx);
+    const t       = wrapper._tasks[idx];
+    const input   = document.getElementById('date-input-'  + idx);
+    const status  = document.getElementById('date-status-' + idx);
     const newDate = input.value;
 
     if (!newDate) { status.textContent = 'בחר תאריך'; status.className = 'update-error'; return; }
@@ -593,11 +629,11 @@
   }
 
   function updateNote(btn) {
-    const idx    = parseInt(btn.dataset.idx);
+    const idx     = parseInt(btn.dataset.idx);
     const wrapper = document.getElementById('task-list-wrapper');
-    const t      = wrapper._tasks[idx];
-    const input  = document.getElementById('note-input-' + idx);
-    const status = document.getElementById('note-status-' + idx);
+    const t       = wrapper._tasks[idx];
+    const input   = document.getElementById('note-input-'  + idx);
+    const status  = document.getElementById('note-status-' + idx);
     const newNote = input.value.trim();
 
     btn.disabled = true;
@@ -628,11 +664,12 @@
     const idx      = parseInt(btn.dataset.idx);
     const wrapper  = document.getElementById('task-list-wrapper');
     const t        = wrapper._tasks[idx];
-    const newOwner = document.getElementById('new-owner-' + idx).value.trim();
-    const newMail  = document.getElementById('new-mail-'  + idx).value.trim();
+    const sel      = document.getElementById('transfer-select-' + idx);
     const status   = document.getElementById('transfer-status-' + idx);
+    const newOwner = sel.value;
+    const newMail  = newOwner ? (ownerMailMap[newOwner] || '') : '';
 
-    if (!newOwner) { status.textContent = 'הזן שם עובד'; status.className = 'update-error'; return; }
+    if (!newOwner) { status.textContent = 'בחר עובד'; status.className = 'update-error'; return; }
 
     if (!confirm('להעביר את המשימה "' + t.task + '" ל-' + newOwner + '?')) return;
 
@@ -654,7 +691,7 @@
         const globalIdx = allRows.findIndex(r => r.task === t.task && r.owner === t.owner);
         if (globalIdx !== -1) {
           allRows[globalIdx].owner = newOwner;
-          if (newMail) allRows[globalIdx].mail = newMail;
+          allRows[globalIdx].mail  = newMail;
         }
         const remaining = wrapper.querySelectorAll('.task-card');
         if (remaining.length === 0) {
@@ -669,9 +706,9 @@
   }
 
   function deleteTask(btn) {
-    const idx    = parseInt(btn.dataset.idx);
+    const idx     = parseInt(btn.dataset.idx);
     const wrapper = document.getElementById('task-list-wrapper');
-    const t      = wrapper._tasks[idx];
+    const t       = wrapper._tasks[idx];
 
     if (!confirm('למחוק את המשימה:\n"' + t.task + '"?\n\nפעולה זו אינה ניתנת לביטול.')) return;
 
