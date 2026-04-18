@@ -322,7 +322,7 @@
 
     <div class="conditional" id="section-quarterly">
       <div class="quarterly-banner">
-        📅 התזכורת תישלח אחת לשלושה חודשים, באותו יום בחודש שנבחר בתאריך ההתחלה.
+        תאריך הבא יחושב אוטומטית — 3 חודשים מתאריך ההתחלה שנבחר.
       </div>
     </div>
 
@@ -335,7 +335,7 @@
 
     <div class="conditional" id="section-one-time">
       <div class="one-time-banner">
-        🔔 התזכורת תישלח פעם אחת בלבד בתאריך שנבחר, ותימחק אוטומטית לאחר השליחה.
+        התזכורת תישלח פעם אחת בלבד בתאריך שנבחר, ותימחק אוטומטית לאחר השליחה.
       </div>
     </div>
 
@@ -351,8 +351,8 @@
       <textarea id="description" placeholder="הערות נוספות על המשימה..."></textarea>
     </div>
 
-    <div class="success-msg" id="success-msg">✅ המשימה נוספה בהצלחה לגיליון!</div>
-    <div class="error-msg" id="error-msg">❌ שגיאה בשמירה. נסה שוב.</div>
+    <div class="success-msg" id="success-msg">המשימה נוספה בהצלחה לגיליון!</div>
+    <div class="error-msg" id="error-msg">שגיאה בשמירה. נסה שוב.</div>
 
     <button class="submit-btn" id="submit-btn" onclick="submitForm()">הוסף משימה</button>
 
@@ -361,7 +361,7 @@
 
 <div class="view-container">
   <div class="view-header">
-    <h2>📋 משימות לפי עובד</h2>
+    <h2>משימות לפי עובד</h2>
     <p>בחר עובד לצפייה ועדכון משימות</p>
   </div>
 
@@ -377,7 +377,7 @@
 </div>
 
 <script>
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwIJZNDZiehPvPwebFeI5G20XwMENtEo6nGGpHG2F-KGYPxQtI9TrEB1F64PfliBQY/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzo4KWorCvIDnvcbc5y6BrKAi4G2zK303obPNVZgzPxsDJnAYqMCD7RYOL56xSU5yURGw/exec";
 
   const freqLabels = {
     weekly: 'שבועי', monthly: 'חודשי', quarterly: 'רבעוני',
@@ -462,13 +462,13 @@
     const cards = tasks.map((t, idx) => {
       const freq    = t.frequency_type || '';
       const badge   = `<span class="freq-badge ${freq}">${freqLabels[freq] || freq}</span>`;
-      const desc    = t.description ? `<div class="task-card-desc">📝 ${t.description}</div>` : '';
+      const desc    = t.description ? `<div class="task-card-desc">${t.description}</div>` : '';
       const dateVal = toInputDate(t.next_run);
       return `
         <div class="task-card" id="task-card-${idx}">
-          <div class="task-card-title">📋 ${t.task}</div>
+          <div class="task-card-title">${t.task}</div>
           <div class="task-card-meta">
-            <span>📅 תאריך הבא: ${formatDate(t.next_run)}</span>
+            <span>תאריך הבא: ${formatDate(t.next_run)}</span>
             <span>${badge}</span>
           </div>
           ${desc}
@@ -480,7 +480,7 @@
               <span id="date-status-${idx}"></span>
             </div>
             <div class="task-card-delete-row">
-              <button class="delete-task-btn" data-idx="${idx}" onclick="deleteTask(this)">🗑️ מחק</button>
+              <button class="delete-task-btn" data-idx="${idx}" onclick="deleteTask(this)">מחק</button>
             </div>
           </div>
         </div>
@@ -517,13 +517,13 @@
 
     fetch(url, { method: 'GET', mode: 'no-cors' })
       .then(() => {
-        status.textContent = '✅ עודכן';
+        status.textContent = 'עודכן';
         status.className = 'update-success';
         t.next_run = newDate;
         btn.disabled = false;
       })
       .catch(() => {
-        status.textContent = '❌ שגיאה';
+        status.textContent = 'שגיאה';
         status.className = 'update-error';
         btn.disabled = false;
       });
@@ -534,7 +534,7 @@
     const wrapper = document.getElementById('task-list-wrapper');
     const t       = wrapper._tasks[idx];
 
-    if (!confirm(`למחוק את המשימה:\n"${t.task}"?\n\nפעולה זו אינה ניתנת לביטול.`)) return;
+    if (!confirm('למחוק את המשימה:\n"' + t.task + '"?\n\nפעולה זו אינה ניתנת לביטול.')) return;
 
     btn.disabled = true;
     btn.textContent = 'מוחק...';
@@ -546,7 +546,7 @@
 
     fetch(url, { method: 'GET', mode: 'no-cors' })
       .then(() => {
-        const card = document.getElementById(`task-card-${idx}`);
+        const card = document.getElementById('task-card-' + idx);
         if (card) card.remove();
         const globalIdx = allRows.findIndex(r => r.task === t.task && r.owner === t.owner);
         if (globalIdx !== -1) allRows.splice(globalIdx, 1);
@@ -557,7 +557,7 @@
       })
       .catch(() => {
         btn.disabled = false;
-        btn.textContent = '🗑️ מחק';
+        btn.textContent = 'מחק';
         alert('שגיאה במחיקה. נסה שוב.');
       });
   }
@@ -569,7 +569,7 @@
     const day   = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year  = d.getFullYear();
-    return `${day}/${month}/${year}`;
+    return day + '/' + month + '/' + year;
   }
 
   function toInputDate(raw) {
@@ -578,7 +578,7 @@
     if (isNaN(d)) return '';
     const day   = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
-    return `${d.getFullYear()}-${month}-${day}`;
+    return d.getFullYear() + '-' + month + '-' + day;
   }
 
   function getWeekdays() {
