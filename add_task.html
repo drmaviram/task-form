@@ -6,7 +6,7 @@
 <title>הוספת משימה תקופתית</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  
+
   body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: #f0f4f8;
@@ -143,7 +143,7 @@
   .view-body { padding: 1.5rem 2rem; display: flex; flex-direction: column; gap: 1.2rem; }
 
   .task-list {
-    max-height: 500px; overflow-y: auto;
+    max-height: 600px; overflow-y: auto;
     display: flex; flex-direction: column; gap: 10px; padding-left: 4px;
   }
 
@@ -169,6 +169,7 @@
     border-top: 1px solid #e3eafd; padding-top: 6px; margin-top: 2px;
   }
 
+  /* שורת פעולות ראשית */
   .task-card-actions {
     display: flex;
     flex-direction: row;
@@ -190,8 +191,7 @@
   }
 
   .task-card-date-row label {
-    font-size: 12px; color: #555; font-weight: 500;
-    white-space: nowrap;
+    font-size: 12px; color: #555; font-weight: 500; white-space: nowrap;
   }
 
   .task-card-date-row input[type="date"] {
@@ -214,9 +214,7 @@
   .update-error   { font-size: 11px; color: #c62828; white-space: nowrap; }
 
   .task-card-delete-row {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
+    display: flex; align-items: center; flex-shrink: 0;
   }
 
   .delete-task-btn {
@@ -228,6 +226,74 @@
 
   .delete-task-btn:hover { background: #b71c1c; }
   .delete-task-btn:disabled { background: #aaa; cursor: not-allowed; }
+
+  /* הערות */
+  .task-card-note-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid #e3eafd;
+    padding-top: 8px;
+  }
+
+  .task-card-note-row label {
+    font-size: 12px; color: #555; font-weight: 500;
+  }
+
+  .task-card-note-row textarea {
+    font-size: 12px; padding: 6px 8px; border-radius: 6px;
+    border: 1.5px solid #ddd; background: #fff;
+    min-height: 55px; resize: vertical; direction: rtl;
+    font-family: inherit;
+  }
+
+  .note-actions {
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .update-note-btn {
+    background: #00897b; color: white; border: none;
+    padding: 5px 12px; border-radius: 6px; font-size: 12px;
+    cursor: pointer; font-family: inherit; transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .update-note-btn:hover { background: #00695c; }
+  .update-note-btn:disabled { background: #aaa; cursor: not-allowed; }
+
+  /* העברת משימה */
+  .task-card-transfer-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid #e3eafd;
+    padding-top: 8px;
+  }
+
+  .task-card-transfer-row label {
+    font-size: 12px; color: #555; font-weight: 500;
+  }
+
+  .transfer-inputs {
+    display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+  }
+
+  .transfer-inputs input[type="text"],
+  .transfer-inputs input[type="email"] {
+    font-size: 12px; padding: 5px 8px; border-radius: 6px;
+    border: 1.5px solid #ddd; background: #fff;
+    flex: 1; min-width: 120px;
+  }
+
+  .transfer-btn {
+    background: #7b1fa2; color: white; border: none;
+    padding: 5px 12px; border-radius: 6px; font-size: 12px;
+    cursor: pointer; font-family: inherit; transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .transfer-btn:hover { background: #4a148c; }
+  .transfer-btn:disabled { background: #aaa; cursor: not-allowed; }
 
   .freq-badge {
     display: inline-block; padding: 2px 10px; border-radius: 12px;
@@ -377,7 +443,7 @@
 </div>
 
 <script>
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzo4KWorCvIDnvcbc5y6BrKAi4G2zK303obPNVZgzPxsDJnAYqMCD7RYOL56xSU5yURGw/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6aIYSwzHyuElQAdMBXoDApQb3R6ziMYnqBfisHXqq3Fm4ViC0i4oVs-81lF1gW6yGgA/exec";
 
   const freqLabels = {
     weekly: 'שבועי', monthly: 'חודשי', quarterly: 'רבעוני',
@@ -472,6 +538,8 @@
             <span>${badge}</span>
           </div>
           ${desc}
+
+          <!-- שינוי תאריך + מחיקה -->
           <div class="task-card-actions">
             <div class="task-card-date-row">
               <label>שינוי תאריך:</label>
@@ -483,6 +551,28 @@
               <button class="delete-task-btn" data-idx="${idx}" onclick="deleteTask(this)">מחק</button>
             </div>
           </div>
+
+          <!-- עדכון הערות -->
+          <div class="task-card-note-row">
+            <label>הערות:</label>
+            <textarea id="note-input-${idx}" placeholder="הוסף או ערוך הערה...">${t.description || ''}</textarea>
+            <div class="note-actions">
+              <button class="update-note-btn" data-idx="${idx}" onclick="updateNote(this)">שמור הערה</button>
+              <span id="note-status-${idx}"></span>
+            </div>
+          </div>
+
+          <!-- העברת משימה לעובד אחר -->
+          <div class="task-card-transfer-row">
+            <label>העברה לעובד אחר:</label>
+            <div class="transfer-inputs">
+              <input type="text"  id="new-owner-${idx}" placeholder="שם עובד חדש">
+              <input type="email" id="new-mail-${idx}"  placeholder="מייל עובד חדש">
+              <button class="transfer-btn" data-idx="${idx}" onclick="transferTask(this)">העבר</button>
+              <span id="transfer-status-${idx}"></span>
+            </div>
+          </div>
+
         </div>
       `;
     }).join('');
@@ -495,15 +585,11 @@
     const idx     = parseInt(btn.dataset.idx);
     const wrapper = document.getElementById('task-list-wrapper');
     const t       = wrapper._tasks[idx];
-    const input   = document.getElementById(`date-input-${idx}`);
-    const status  = document.getElementById(`date-status-${idx}`);
+    const input   = document.getElementById('date-input-' + idx);
+    const status  = document.getElementById('date-status-' + idx);
     const newDate = input.value;
 
-    if (!newDate) {
-      status.textContent = 'יש לבחור תאריך';
-      status.className = 'update-error';
-      return;
-    }
+    if (!newDate) { status.textContent = 'יש לבחור תאריך'; status.className = 'update-error'; return; }
 
     btn.disabled = true;
     status.textContent = 'שומר...';
@@ -521,6 +607,85 @@
         status.className = 'update-success';
         t.next_run = newDate;
         btn.disabled = false;
+      })
+      .catch(() => {
+        status.textContent = 'שגיאה';
+        status.className = 'update-error';
+        btn.disabled = false;
+      });
+  }
+
+  function updateNote(btn) {
+    const idx     = parseInt(btn.dataset.idx);
+    const wrapper = document.getElementById('task-list-wrapper');
+    const t       = wrapper._tasks[idx];
+    const input   = document.getElementById('note-input-' + idx);
+    const status  = document.getElementById('note-status-' + idx);
+    const newNote = input.value.trim();
+
+    btn.disabled = true;
+    status.textContent = 'שומר...';
+    status.className = '';
+
+    const url = APPS_SCRIPT_URL +
+      '?action=updateNote' +
+      '&task='  + encodeURIComponent(t.task) +
+      '&owner=' + encodeURIComponent(t.owner) +
+      '&note='  + encodeURIComponent(newNote);
+
+    fetch(url, { method: 'GET', mode: 'no-cors' })
+      .then(() => {
+        status.textContent = 'נשמר';
+        status.className = 'update-success';
+        t.description = newNote;
+        btn.disabled = false;
+      })
+      .catch(() => {
+        status.textContent = 'שגיאה';
+        status.className = 'update-error';
+        btn.disabled = false;
+      });
+  }
+
+  function transferTask(btn) {
+    const idx      = parseInt(btn.dataset.idx);
+    const wrapper  = document.getElementById('task-list-wrapper');
+    const t        = wrapper._tasks[idx];
+    const newOwner = document.getElementById('new-owner-' + idx).value.trim();
+    const newMail  = document.getElementById('new-mail-'  + idx).value.trim();
+    const status   = document.getElementById('transfer-status-' + idx);
+
+    if (!newOwner) { status.textContent = 'יש להזין שם עובד'; status.className = 'update-error'; return; }
+
+    if (!confirm('להעביר את המשימה "' + t.task + '" ל-' + newOwner + '?')) return;
+
+    btn.disabled = true;
+    status.textContent = 'מעביר...';
+    status.className = '';
+
+    const url = APPS_SCRIPT_URL +
+      '?action=updateOwner' +
+      '&task='      + encodeURIComponent(t.task) +
+      '&owner='     + encodeURIComponent(t.owner) +
+      '&new_owner=' + encodeURIComponent(newOwner) +
+      '&new_mail='  + encodeURIComponent(newMail);
+
+    fetch(url, { method: 'GET', mode: 'no-cors' })
+      .then(() => {
+        status.textContent = 'הועבר בהצלחה';
+        status.className = 'update-success';
+        // הסר את הכרטיס מהרשימה הנוכחית
+        const card = document.getElementById('task-card-' + idx);
+        if (card) card.remove();
+        const globalIdx = allRows.findIndex(r => r.task === t.task && r.owner === t.owner);
+        if (globalIdx !== -1) {
+          allRows[globalIdx].owner = newOwner;
+          if (newMail) allRows[globalIdx].mail = newMail;
+        }
+        const remaining = wrapper.querySelectorAll('.task-card');
+        if (remaining.length === 0) {
+          wrapper.innerHTML = '<div class="no-tasks">אין משימות לעובד זה</div>';
+        }
       })
       .catch(() => {
         status.textContent = 'שגיאה';
