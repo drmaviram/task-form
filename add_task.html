@@ -377,8 +377,8 @@
     <hr class="divider">
 
     <div class="field">
-      <label>הערות</label>
-      <textarea id="description" placeholder="הערות נוספות על המשימה..."></textarea>
+      <label>הוראות</label>
+      <textarea id="description" placeholder="הוראות ביצוע המשימה..."></textarea>
     </div>
 
     <div class="success-msg" id="success-msg">המשימה נוספה בהצלחה לגיליון!</div>
@@ -420,7 +420,6 @@
     interval: 'section-interval', one_time: 'section-one-time',
   };
 
-  // מפה של שם עובד → מייל
   let ownerMailMap = {};
 
   function hideAllSections() {
@@ -537,19 +536,19 @@
               <label>תאריך:</label>
               <input type="date" id="date-input-${idx}" value="${dateVal}">
               <button class="btn-small btn-update"   data-idx="${idx}" onclick="updateDate(this)">עדכן</button>
-              <button class="btn-small btn-note"     data-idx="${idx}" onclick="togglePanel(this,'note')">הערות</button>
+              <button class="btn-small btn-note"     data-idx="${idx}" onclick="togglePanel(this,'note')">הוראות</button>
               <button class="btn-small btn-transfer" data-idx="${idx}" onclick="togglePanel(this,'transfer')">העבר</button>
               <span id="date-status-${idx}"></span>
             </div>
             <button class="btn-small btn-delete" data-idx="${idx}" onclick="deleteTask(this)">מחק</button>
           </div>
 
-          <!-- פאנל הערות -->
+          <!-- פאנל הוראות -->
           <div class="task-card-panel" id="note-panel-${idx}">
-            <label>הערות:</label>
-            <textarea id="note-input-${idx}" placeholder="הוסף או ערוך הערה...">${t.description || ''}</textarea>
+            <label>הוראות:</label>
+            <textarea id="note-input-${idx}" placeholder="הוסף או ערוך הוראות...">${t.description || ''}</textarea>
             <div class="panel-actions">
-              <button class="btn-small btn-note" data-idx="${idx}" onclick="updateNote(this)">שמור הערה</button>
+              <button class="btn-small btn-note" data-idx="${idx}" onclick="updateNote(this)">שמור הוראות</button>
               <span id="note-status-${idx}"></span>
             </div>
           </div>
@@ -574,7 +573,6 @@
     wrapper.innerHTML = `<div class="task-list">${cards}</div>`;
     wrapper._tasks = tasks;
 
-    // מלא את רשימות ההעברה
     tasks.forEach((t, idx) => buildTransferSelect(idx, t.owner));
   }
 
